@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 require('dotenv').config()
 
 //Set URI
-const URI = "mongodb://127.0.0.1:27017/movieData";
+const URI = "mongodb+srv://ckramarnath:G7R43r2BtZXCqd4o@edugo.huyeyb6.mongodb.net/moviesData?retryWrites=true&w=majority";
 const db = mongoose.connection;
 //Config Object to Avoid Deprecation Warnings
 const config = { useNewUrlParser: true, useUnifiedTopology: true };
