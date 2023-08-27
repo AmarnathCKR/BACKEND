@@ -12,6 +12,7 @@ const MovieSchema = new mongoose.Schema(
     rating: String,
     language: String,
     country: String,
+    image : String,
     user : {
       type: mongoose.Types.ObjectId,
       ref: "User",

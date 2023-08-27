@@ -8,9 +8,10 @@ const schema = Joi.object({
   actors: Joi.string().required(),
   plot: Joi.string().required(),
   runtime: Joi.number().integer().min(0).max(1000).required(),
-  rating: Joi.number().min(0).max(10).required(),
+  image: Joi.string().uri().required(),
   language: Joi.string().required(),
   country: Joi.string().required(),
+  id: Joi.string()
 });
 
 const validateMovie = (req, res, next) => {
