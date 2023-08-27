@@ -4,8 +4,9 @@
   "description": "BACKEND",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js"
-  },
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AmarnathCKR/BACKEND.git"
