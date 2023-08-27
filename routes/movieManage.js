@@ -4,6 +4,7 @@ const Movie = require("../Database/movieSchema");
 const userAuth = require("../middlewares/userAuth");
 const validateMovie = require("../middlewares/validateMovie");
 const User = require("../Database/userSchema");
+const Rating = require("../Database/ratingSchema");
 
 router.post("/create", userAuth, validateMovie, async (req, res) => {
     try {
@@ -164,8 +165,9 @@ router.get("/details", async (req, res) => {
     console.log(req.query.movie)
     if (req.query.movie !== null) {
         const movies = await Movie.findOne({ _id: req.query.movie });
+        const ratingList = await Rating.find({ movieId : req.query.movie})
         if (movies !== null) {
-            return res.status(200).send(movies);
+            return res.status(200).send({movie : movies,rating : ratingList});
         }
     }
 
@@ -176,13 +178,15 @@ router.get("/details/auth", userAuth, async (req, res) => {
     const { id } = req.params;
     if (req.query.movie !== null) {
         const movies = await Movie.findOne({ _id: req.query.movie });
+        const ratingList = await Rating.find({ movieId : req.query.movie})
+        const voted = await Rating.findOne({ userId : id, movieId : req.query.movie})
 
         if (movies !== null) {
             const status = await User.findOne({ _id: id, watchlist: { $in: [req.query.id] } });
             console.log(status);
             const exist = !!status;
-            if (exist) return res.status(200).send({ movie: movies, owned: true });
-            return res.status(200).send({ movie: movies, owned: false });
+            if (exist) return res.status(200).send({ movie: movies, owned: true, rating : ratingList ,voted : voted});
+            return res.status(200).send({ movie: movies, owned: false,rating : ratingList ,voted : voted });
         }
     }
 
@@ -229,6 +233,23 @@ router.get("/list", userAuth, async (req, res) => {
     console.log(values);
     const documents = await Movie.find({ _id: { $in: values } });
     res.status(200).send(documents);
+})
+
+router.get("/rating", userAuth,async (req,res)=>{
+    const { id } = req.params;
+    const { movie,rating } = req.query;
+    if (movie !== null) {
+        const newRating = new Rating({
+            userId : id,
+            movieId : movie,
+            rating : rating
+        })
+        await newRating.save();
+        return res.status(200).send("success");
+
+    } else {
+        return res.status(404).send({ error: "invalid query" });
+    }
 })
 
 
