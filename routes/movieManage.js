@@ -164,7 +164,7 @@ router.get("/details", async (req, res) => {
     console.log(req.query.movie)
     if (req.query.movie !== null) {
         const movies = await Movie.findOne({ _id: req.query.movie });
-        if (movies) {
+        if (movies !== null) {
             return res.status(200).send(movies);
         }
     }
@@ -177,7 +177,7 @@ router.get("/details/auth", userAuth, async (req, res) => {
     if (req.query.movie !== null) {
         const movies = await Movie.findOne({ _id: req.query.movie });
 
-        if (movies) {
+        if (movies !== null) {
             const status = await User.findOne({ _id: id, watchlist: { $in: [req.query.id] } });
             console.log(status);
             const exist = !!status;
@@ -192,7 +192,7 @@ router.get("/details/auth", userAuth, async (req, res) => {
 router.get("/watchlist", userAuth, async (req, res) => {
     const { id } = req.params;
     const { movie } = req.query;
-    if (movie) {
+    if (movie !== null) {
         User.updateOne(
             { _id: id },
             { $push: { watchlist: movie } }
@@ -209,7 +209,7 @@ router.get("/watchlist", userAuth, async (req, res) => {
 router.get("/watchlist-remove", userAuth, async (req, res) => {
     const { id } = req.params;
     const { movie } = req.query;
-    if (movie) {
+    if (movie !== null) {
         const status = await User.updateOne(
             { _id: id },
             { $pull: { watchlist: movie } }
@@ -219,6 +219,16 @@ router.get("/watchlist-remove", userAuth, async (req, res) => {
     } else {
         return res.status(404).send({ error: "invalid query" });
     }
+})
+
+router.get("/list", userAuth, async (req, res) => {
+    const { id } = req.params;
+    const users = await User.findOne({ _id: id });
+
+    const values = users.watchlist;
+    console.log(values);
+    const documents = await Movie.find({ _id: { $in: values } });
+    res.status(200).send(documents);
 })
 
 
