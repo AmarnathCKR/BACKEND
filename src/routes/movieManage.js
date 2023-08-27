@@ -182,7 +182,8 @@ router.get("/details/auth", userAuth, async (req, res) => {
         const voted = await Rating.findOne({ userId : id, movieId : req.query.movie})
 
         if (movies !== null) {
-            const status = await User.findOne({ _id: id, watchlist: { $in: [req.query.id] } });
+            console.log(req.query.movie)
+            const status = await User.findOne({ _id: id, watchlist: { $in: [req.query.movie] } });
             console.log(status);
             const exist = !!status;
             if (exist) return res.status(200).send({ movie: movies, owned: true, rating : ratingList ,voted : voted});
